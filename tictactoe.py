@@ -29,6 +29,7 @@ win_diagonal = [
 ]
 # //////////////////////////////////////////////
 def psss():
+    print('skdskdskdsdj')
     return 'afsdksdhfdhfskdhfskfjshfk'
 
 
