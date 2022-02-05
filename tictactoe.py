@@ -28,6 +28,9 @@ win_diagonal = [
     [8, 4, 0]
 ]
 # //////////////////////////////////////////////
+def psss():
+    return 'afsdksdhfdhfskdhfskfjshfk'
+
 
 def checkWinner(player):
     # Check Horizontal
