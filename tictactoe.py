@@ -8,9 +8,7 @@ board_sample = f'\
 ------------------------------------- \n\
 |     1     |     2     |     3     |'
 
-
-# //////////////// Winning Move ////////////////
-
+# //////////////// Winning Moves ////////////////
 win_horizontal = [
     [6, 7, 8],
     [3, 4, 5],
@@ -27,39 +25,23 @@ win_diagonal = [
     [6, 4, 2],
     [8, 4, 0]
 ]
+
+winning_moves = [win_horizontal, win_vertical, win_diagonal]
 # //////////////////////////////////////////////
 
-def checkWinner(player):
-    # Check Horizontal
-    for i in range(len(win_horizontal)):
-        point = 0
-        for choices in player:
-            if choices in win_horizontal[i]:
-                point += 1
-            if point == 3: return True
-
-    # Check Vertical
-    for i in range(len(win_vertical)):
-        point = 0
-        for choices in player:
-            if choices in win_vertical[i]:
-                point += 1
-            if point == 3: return True
-
-    # Check Diagonal
-    for i in range(len(win_diagonal)):
-        point = 0
-        for choices in player:
-            if choices in win_diagonal[i]:
-                point += 1
-            if point == 3: return True
-    
+def checkWinner(player: int) -> bool:
+    for win in winning_moves:
+        for i in range(len(win)):
+            point = 0
+            for choices in player:
+                if choices in win[i]:
+                    point += 1
+                if point == 3: return True
     return False
 
 segment = ['']*9
 segment_player1 = []
 segment_player2 = []
-
 
 while True:
     player1 = int(input("Player1's turn: "))
