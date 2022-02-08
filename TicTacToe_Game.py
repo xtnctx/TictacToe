@@ -68,45 +68,37 @@ class TicTacToe(QtWidgets.QMainWindow):
 
     Player1_Turn = True
 
-    def __init__(self):
+    def __init__(self, play_type='twoPlayer'):
         print(self.__doc__)
         super().__init__()
-        self.setObjectName("MainWindow")
         self.resize(X_WINDOW, Y_WINDOW)
 
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.centralwidget.setObjectName("centralwidget")
 
         self.main_gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.main_gridLayout.setObjectName("main_gridLayout")
 
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.horizontalLayout.setSpacing(SEGMENT_GRID_SPACING)
-        self.horizontalLayout.setObjectName("horizontalLayout")
 
         self.font.setPointSize(BTN_FONT_SIZE)
 
         self.home_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.home_btn.setMinimumSize(QtCore.QSize(0, 50))
-        # self.home_btn.setShortcut(QtGui.QKeySequence("0"))
+        self.home_btn.setMinimumSize(QtCore.QSize(0, BTN_V_MIN))
         self.home_btn.setFont(self.font)
         self.home_btn.setStyleSheet(btn_styleSheet)
-        self.home_btn.setObjectName("home_btn")
         self.horizontalLayout.addWidget(self.home_btn)
 
         self.retry_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.retry_btn.setMinimumSize(QtCore.QSize(0, 50))
+        self.retry_btn.setMinimumSize(QtCore.QSize(0, BTN_V_MIN))
         self.retry_btn.setFont(self.font)
         self.retry_btn.setStyleSheet(btn_styleSheet)
-        self.retry_btn.setObjectName("retry_btn")
         self.horizontalLayout.addWidget(self.retry_btn)
 
         self.main_gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
 
         self.gridLayout_2 = QtWidgets.QGridLayout()
-        self.gridLayout_2.setObjectName("gridLayout_2")
 
         self.segment0 = QtWidgets.QPushButton(self.centralwidget)
         self.gridLayout_2.addWidget(self.segment0, 2, 0, 1, 1)
@@ -223,7 +215,7 @@ class TicTacToe(QtWidgets.QMainWindow):
     
     def isBoardFull(self):
         return len(self.Player1_segments + self.Player2_segments) == len(self.btn_vars)
-
+    
     def checkWinner(self, player: int) -> list:
         for win in WINNING_MOVES:
             for i in range(len(win)):
@@ -253,7 +245,7 @@ class TicTacToe(QtWidgets.QMainWindow):
 
     def play(self) -> QtWidgets.QMainWindow:
         ''' 
-        Use this when for standalone purposes
+        Use this for standalone purposes
         '''
         print(self.__doc__)
         self.show()
@@ -306,7 +298,8 @@ class UI_MainWindow(QtWidgets.QMainWindow):
     def play(self):
         window.setCurrentIndex(window.currentIndex()+1)
         
-        
+
+
 if __name__ == "__main__":
     suppress_qt_warnings()
     app = QtWidgets.QApplication(sys.argv)

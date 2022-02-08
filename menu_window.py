@@ -1,0 +1,107 @@
+from PyQt5 import QtCore, QtGui, QtWidgets
+from settings import *
+import sys, os
+
+
+def suppress_qt_warnings():
+   os.environ["QT_DEVICE_PIXEL_RATIO"] = "0"
+   os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
+   os.environ["QT_SCREEN_SCALE_FACTORS"] = "1"
+   os.environ["QT_SCALE_FACTOR"] = "1"
+
+class MenuWindow(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("MainWindow")
+        self.resize(423, 392)
+        self.centralwidget = QtWidgets.QWidget(self)
+        self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.button_gridLayout = QtWidgets.QGridLayout()
+        self.button_gridLayout.setObjectName("button_gridLayout")
+        self.play_button = QtWidgets.QPushButton(self.centralwidget)
+        self.play_button.setMinimumSize(QtCore.QSize(0, 50))
+        font = QtGui.QFont()
+        font.setFamily("Calibri")
+        font.setPointSize(12)
+        self.play_button.setFont(font)
+        self.play_button.setObjectName("play_button")
+        self.button_gridLayout.addWidget(self.play_button, 0, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.button_gridLayout, 2, 0, 1, 1)
+        self.main_gridLayout = QtWidgets.QGridLayout()
+        self.main_gridLayout.setContentsMargins(25, -1, -1, -1)
+        self.main_gridLayout.setObjectName("main_gridLayout")
+        self.two_player_RB = QtWidgets.QRadioButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.two_player_RB.sizePolicy().hasHeightForWidth())
+        self.two_player_RB.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Calibri")
+        font.setPointSize(12)
+        self.two_player_RB.setFont(font)
+        self.two_player_RB.setObjectName("two_player_RB")
+        self.main_gridLayout.addWidget(self.two_player_RB, 0, 0, 1, 1)
+        self.easy_comp_RB = QtWidgets.QRadioButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.easy_comp_RB.sizePolicy().hasHeightForWidth())
+        self.easy_comp_RB.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Calibri")
+        font.setPointSize(12)
+        self.easy_comp_RB.setFont(font)
+        self.easy_comp_RB.setObjectName("easy_comp_RB")
+        self.main_gridLayout.addWidget(self.easy_comp_RB, 1, 0, 1, 1)
+        self.hard_comp_RB = QtWidgets.QRadioButton(self.centralwidget)
+        self.hard_comp_RB.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.hard_comp_RB.sizePolicy().hasHeightForWidth())
+        self.hard_comp_RB.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Calibri")
+        font.setPointSize(12)
+        self.hard_comp_RB.setFont(font)
+        self.hard_comp_RB.setObjectName("hard_comp_RB")
+        self.main_gridLayout.addWidget(self.hard_comp_RB, 2, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.main_gridLayout, 1, 0, 1, 1)
+        self.Title = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Title.sizePolicy().hasHeightForWidth())
+        self.Title.setSizePolicy(sizePolicy)
+        self.Title.setMinimumSize(QtCore.QSize(0, 120))
+        font = QtGui.QFont()
+        font.setFamily("Calibri")
+        font.setPointSize(35)
+        self.Title.setFont(font)
+        self.Title.setAlignment(QtCore.Qt.AlignCenter)
+        self.Title.setObjectName("Title")
+        self.gridLayout_2.addWidget(self.Title, 0, 0, 1, 1)
+        self.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
+
+    def retranslateUi(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.play_button.setText(_translate("MainWindow", "Play"))
+        self.two_player_RB.setText(_translate("MainWindow", "2 Player"))
+        self.easy_comp_RB.setText(_translate("MainWindow", "Computer (Easy)"))
+        self.hard_comp_RB.setText(_translate("MainWindow", "Computer (Hard)"))
+        self.Title.setText(_translate("MainWindow", "Tic-Tac-Toe"))
+
+
+if __name__ == "__main__":
+    suppress_qt_warnings()
+    app = QtWidgets.QApplication(sys.argv)
+    menu = MenuWindow()
+    menu.show()
+    sys.exit(app.exec_())

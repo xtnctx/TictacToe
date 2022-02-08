@@ -6,6 +6,7 @@ Y_WINDOW = 600
 SEGMENT_GRID_SPACING = 6
 SEGMENT_BTN_FONT_SIZE = 65
 BTN_FONT_SIZE = 12
+BTN_V_MIN = 50
 
 # //////////////// Winning Moves ////////////////
 win_horizontal = [
