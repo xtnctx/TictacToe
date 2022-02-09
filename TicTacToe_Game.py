@@ -137,8 +137,6 @@ class TicTacToe(QtWidgets.QMainWindow):
                 self.segment3, self.segment4, self.segment5,
                 self.segment6, self.segment7, self.segment8]
         
-        print(self.segment0.size())
-        
         self.main_gridLayout.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         self.statusBar = QtWidgets.QStatusBar(self)
         self.setStatusBar(self.statusBar)
