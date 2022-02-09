@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from functools import partial
 from settings import *
 import TicTacToe_Game
@@ -10,6 +10,16 @@ def suppress_qt_warnings():
    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
    os.environ["QT_SCREEN_SCALE_FACTORS"] = "1"
    os.environ["QT_SCALE_FACTOR"] = "1"
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 class MainWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -52,6 +62,8 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = MainWidget()
     w.resize(X_WINDOW, Y_WINDOW)
+    w.setWindowTitle('Tic-Tac-Toe')
+    w.setWindowIcon(QtGui.QIcon(resource_path("icon.png")))
 
     # Move to the center of the screen
     screen = QtWidgets.QDesktopWidget().availableGeometry()
