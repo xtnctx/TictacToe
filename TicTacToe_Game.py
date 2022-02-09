@@ -1,6 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from threading import Thread
 from settings import *
-import sys, os
+import random
+import time
+
+
 
 btn_styleSheet = '''
     
@@ -48,12 +52,6 @@ streak_styleSheet = '''
 
 '''
 
-def suppress_qt_warnings():
-   os.environ["QT_DEVICE_PIXEL_RATIO"] = "0"
-   os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-   os.environ["QT_SCREEN_SCALE_FACTORS"] = "1"
-   os.environ["QT_SCALE_FACTOR"] = "1"
-
 class TicTacToe(QtWidgets.QMainWindow):
     '''
         Thank you for playing my simple game TicTacToe.
@@ -65,14 +63,19 @@ class TicTacToe(QtWidgets.QMainWindow):
 
     Player1_segments = []
     Player2_segments = []
+    Computer_segments = []
 
     Player1_Turn = True
+    Computer_choices = list(range(9))
+    hasWinner = False
 
-    def __init__(self, play_type='twoPlayer'):
+    goBackSignal = QtCore.pyqtSignal()
+
+    def __init__(self, opponent='twoPlayer'):
         print(self.__doc__)
         super().__init__()
+        self.opponent = opponent
         self.resize(X_WINDOW, Y_WINDOW)
-
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
@@ -177,7 +180,10 @@ class TicTacToe(QtWidgets.QMainWindow):
 
     def forEach_connectBtn(self, btn_vars: list) -> None:
         for name in btn_vars:
-            name.clicked.connect(self.attack)
+            if self.opponent.lower() == 'twoplayer':
+                name.clicked.connect(self.two_player_attack)
+            elif self.opponent.lower() == 'easycomp':
+                name.clicked.connect(self.easy_computer_attack)
     
     def disable_segments(self, expt=list()) -> None:
         for name in self.btn_vars:
@@ -186,25 +192,25 @@ class TicTacToe(QtWidgets.QMainWindow):
             else:
                 name.setStyleSheet(streak_styleSheet)
 
-    def attack(self):
+    def two_player_attack(self):
         sending_button = self.sender()
         if self.Player1_Turn:
             if  sending_button.text() != PLAYER_IDS[0] and sending_button.text() != PLAYER_IDS[1]:
-                self.Player1_Turn = False
                 sending_button.setText(PLAYER_IDS[0])
                 self.statusBar.showMessage("Player2's Turn")
                 self.Player1_segments.append(int(sending_button.objectName()))
                 Winner = self.checkWinner(self.Player1_segments)
+                self.Player1_Turn = False
                 if Winner[0]:
                     self.statusBar.showMessage('Player1 Wins!')
                     self.disable_segments(expt=Winner[1])
         else:
             if sending_button.text() != PLAYER_IDS[0] and sending_button.text() != PLAYER_IDS[1]:
-                self.Player1_Turn = True
                 sending_button.setText(PLAYER_IDS[1])
                 self.statusBar.showMessage("Player1's Turn")
                 self.Player2_segments.append(int(sending_button.objectName()))
                 Winner = self.checkWinner(self.Player2_segments)
+                self.Player1_Turn = True
                 if Winner[0]:
                     self.statusBar.showMessage('Player2 Wins!')
                     self.disable_segments(expt=Winner[1])
@@ -212,9 +218,59 @@ class TicTacToe(QtWidgets.QMainWindow):
         if self.isBoardFull():
             self.statusBar.showMessage('Draw')
             self.disable_segments()
-    
+
+    def easy_computer_attack(self):
+        sending_button = self.sender()
+        if self.Player1_Turn and not self.hasWinner: # Human Attack
+            if  sending_button.text() != PLAYER_IDS[0] and sending_button.text() != PLAYER_IDS[1]:
+                sending_button.setText(PLAYER_IDS[0])
+                self.statusBar.showMessage("Computer's Turn")
+                self.Player1_segments.append(int(sending_button.objectName()))
+                self.Computer_choices.remove(int(sending_button.objectName()))
+                Winner = self.checkWinner(self.Player1_segments)
+                self.Player1_Turn = False
+
+                if Winner[0]:
+                    self.statusBar.showMessage('Player1 Wins!')
+                    self.disable_segments(expt=Winner[1])
+                    self.hasWinner = True
+
+                elif self.isBoardFull():
+                    self.statusBar.showMessage('Draw')
+                    self.disable_segments()
+                    self.hasWinner = 1
+
+                computer_move = Thread(target=self.computer_time)
+                computer_move.start()
+
+    def computer_time(self):
+        if not self.hasWinner:
+            computer_choice = random.choice(self.Computer_choices)
+            for name in self.btn_vars:
+                if name.objectName() == str(computer_choice):
+                    time.sleep(random.choice(list(range(1, 3))))
+                    name.setText(PLAYER_IDS[1])
+                    self.statusBar.showMessage("Player1's Turn")
+                    self.Computer_segments.append(computer_choice)
+                    self.Computer_choices.remove(computer_choice)
+                    self.Player1_Turn = True
+                    print(computer_choice)
+                    break
+            Winner = self.checkWinner(self.Computer_segments)
+            if Winner[0]:
+                self.statusBar.showMessage('Computer Wins!')
+                self.disable_segments(expt=Winner[1])
+                self.hasWinner = True
+
+            elif self.isBoardFull():
+                self.statusBar.showMessage('Draw')
+                self.disable_segments()
+
     def isBoardFull(self):
-        return len(self.Player1_segments + self.Player2_segments) == len(self.btn_vars)
+        if self.opponent.lower() == 'twoplayer':
+            return len(self.Player1_segments + self.Player2_segments) == len(self.btn_vars)
+        elif self.opponent.lower() == 'easycomp':
+            return len(self.Player1_segments + self.Computer_segments) == len(self.btn_vars)
     
     def checkWinner(self, player: int) -> list:
         for win in WINNING_MOVES:
@@ -229,8 +285,9 @@ class TicTacToe(QtWidgets.QMainWindow):
         return [False]
 
     def go_back(self):
-        window.setCurrentIndex(window.currentIndex()-1)
-
+        self.restart()
+        self.goBackSignal.emit()
+        
     def restart(self):
         for name in self.btn_vars:
             name.setEnabled(True)
@@ -238,7 +295,10 @@ class TicTacToe(QtWidgets.QMainWindow):
             name.setStyleSheet(segment_styleSheet)
         self.Player1_segments = []
         self.Player2_segments = []
+        self.Computer_segments = []
+        self.Computer_choices = list(range(9))
         self.Player1_Turn = True
+        self.hasWinner = False
         self.forEach_connectBtn(self.btn_vars)
         self.forEach_btnConfigure(self.btn_vars, self.font, QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.statusBar.showMessage("Player1's Turn")
@@ -247,7 +307,6 @@ class TicTacToe(QtWidgets.QMainWindow):
         ''' 
         Use this for standalone purposes
         '''
-        print(self.__doc__)
         self.show()
     
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
@@ -274,44 +333,4 @@ class TicTacToe(QtWidgets.QMainWindow):
             self.go_back()
         elif event.key() == QtCore.Qt.Key_Period:
             self.restart()
-            
-class UI_MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.centralwidget = QtWidgets.QWidget(self)
-        self.centralwidget.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.centralwidget.setObjectName("centralwidget")
 
-        self.button = QtWidgets.QPushButton(self.centralwidget)
-        self.button.setText('next window')
-
-        self.setCentralWidget(self.centralwidget)
-        
-        self.retranslateUi()
-        QtCore.QMetaObject.connectSlotsByName(self)
-    
-    def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
-        # self.setWindowTitle(_translate("MainWindow", "TicTacToe"))
-        self.button.clicked.connect(self.play)
-    
-    def play(self):
-        window.setCurrentIndex(window.currentIndex()+1)
-        
-
-
-if __name__ == "__main__":
-    suppress_qt_warnings()
-    app = QtWidgets.QApplication(sys.argv)
-    window = QtWidgets.QStackedWidget()
-
-    MainWindow = UI_MainWindow()
-    window.addWidget(MainWindow)
-
-    game = TicTacToe()
-    window.addWidget(game)
-
-    window.setWindowTitle("TicTacToe")
-    window.resize(X_WINDOW, Y_WINDOW)
-    window.show()
-    sys.exit(app.exec_())
