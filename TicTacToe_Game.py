@@ -102,6 +102,9 @@ class TicTacToe(QtWidgets.QMainWindow):
         self.main_gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
 
         self.gridLayout_2 = QtWidgets.QGridLayout()
+        self.gridLayout_2.setColumnMinimumWidth(0, X_WINDOW)
+        self.gridLayout_2.setColumnMinimumWidth(1, X_WINDOW)
+        self.gridLayout_2.setColumnMinimumWidth(2, X_WINDOW)
 
         self.segment0 = QtWidgets.QPushButton(self.centralwidget)
         self.gridLayout_2.addWidget(self.segment0, 2, 0, 1, 1)
@@ -133,6 +136,8 @@ class TicTacToe(QtWidgets.QMainWindow):
         self.btn_vars = [self.segment0, self.segment1, self.segment2,
                 self.segment3, self.segment4, self.segment5,
                 self.segment6, self.segment7, self.segment8]
+        
+        print(self.segment0.size())
         
         self.main_gridLayout.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         self.statusBar = QtWidgets.QStatusBar(self)
